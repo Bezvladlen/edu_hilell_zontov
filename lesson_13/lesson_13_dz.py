@@ -1,7 +1,7 @@
 import random
 
 class Unit:
-    def __init__(self, name, health=100.0, power=1, agility=1, intellect=1):
+    def __init__(self, name, health=100, power=1, agility=1, intellect=1):
         self.name = name
         self.health = health
         self.power = power
