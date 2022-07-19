@@ -11,6 +11,16 @@ class Unit:
     def get_name(self):
         return self.name
 
+    def get_damage(self):
+        self.health = int(self.health - self.health * random.randrange(1, 21)/100)
+        if self.health < 0:
+            self.health = 0
+
+    def healing(self):
+        self.health = int(self.health + self.health * random.randrange(1, 21)/100)
+        if self.health > 100:
+            self.health = 100
+
     def __repr__(self):
         return f"({self.name}, {self.health}, {self.power}, {self.agility}, {self.intellect})"
 
@@ -22,11 +32,6 @@ class Mage(Unit):
 
     def get_level_up(self):
         self.intellect += int(self.intellect < 10)
-
-    def healing(self):
-        self.health = int(self.health + self.health * random.randrange(1, 21)/100)
-        if self.health > 100:
-            self.health = 100
 
     def __str__(self):
         str_unit = super().__str__()
@@ -41,11 +46,6 @@ class Archer(Unit):
     def get_level_up(self):
         self.intellect += int(self.agility < 10)
 
-    def healing(self):
-        self.health = int(self.health + self.health * random.randrange(1, 21)/100)
-        if self.health > 100:
-            self.health = 100
-
     def __str__(self):
         str_unit = super().__str__()
         return f"{str_unit}, Bow type - {self.bow_type}"
@@ -58,11 +58,6 @@ class Knight(Unit):
 
     def get_level_up(self):
         self.intellect += int(self.power < 10)
-
-    def healing(self):
-        self.health = int(self.health + self.health * random.randrange(1, 21)/100)
-        if self.health > 100:
-            self.health = 100
 
     def __str__(self):
         str_unit = super().__str__()
