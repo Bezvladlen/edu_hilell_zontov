@@ -5,11 +5,11 @@ import argparse
 system_file = 'system.json'
 
 
-def get_data():
+def get_data(filename):
     """
     Получение данных из системного файла
     """
-    with open(system_file, 'r') as json_file:
+    with open(filename, 'r') as json_file:
         data = json.load(json_file)
     return data
 
@@ -46,7 +46,6 @@ def buy_usd(usd_quantity, data):
         data['UAH'] = round((data['UAH'] - recount), 2)
         data['USD'] = round((data['USD'] + usd_quantity), 2)
         system_change(data)
-        print(f"YOU SOLD {usd_quantity} USD")
     else:
         print(f"UNAVAILABLE, REQUIRED BALANCE UAH {recount}, AVAILABLE {data['UAH']}")
 
@@ -60,7 +59,6 @@ def sell_usd(usd_quantity, data):
         data['UAH'] = round((data['UAH'] + recount), 2)
         data['USD'] = round((data['USD'] - usd_quantity), 2)
         system_change(data)
-        print(f"YOU BOUGHT {usd_quantity} USD")
     else:
         print(f"UNAVAILABLE, REQUIRED BALANCE USD {usd_quantity}, AVAILABLE {data['USD']}")
 
@@ -73,7 +71,6 @@ def buy_max_usd(data):
         amount_of_currency = round(data['UAH'] / data['exchange_rate'], 2)
         data['USD'] = round(data['USD'] + amount_of_currency, 2)
         data['UAH'] = round(data['UAH'] - amount_of_currency * data['exchange_rate'], 2)
-        print(f"YOU BOUGHT {amount_of_currency} USD")
         if data['UAH'] < 0:
             data['UAH'] = round((data['UAH'] + 0.01 * data['exchange_rate']), 2)
             data['USD'] = round(data['USD'] - 0.01, 2)
@@ -105,10 +102,8 @@ def restart():
     """
     Перезагрузка системы, вовзращение системного файла к стоковой конфигурации
     """
-    with open('config.json', 'r') as json_file:
-        data = json.load(json_file)
+    data = get_data('config.json')
     system_change(data)
-    return data
 
 
 args = argparse.ArgumentParser()
@@ -118,23 +113,25 @@ args = vars(args.parse_args())
 command = args['command']
 amount = args['amount']
 
+system_data = get_data(system_file)
+
 if command == 'NEXT':
-    next_day(get_data())
+    next_day(system_data)
 elif command == 'RATE':
-    rate(get_data())
+    rate(system_data)
 elif command == 'AVAILABLE':
-    available(get_data())
+    available(system_data)
 elif command == 'RESTART':
     restart()
 elif command == 'BUY':
     if amount == 'ALL':
-        buy_max_usd(get_data())
+        buy_max_usd(system_data)
     else:
-        buy_usd(float(amount), get_data())
+        buy_usd(float(amount), system_data)
 elif command == 'SELL':
     if amount == 'ALL':
-        sell_all_usd(get_data())
+        sell_all_usd(system_data)
     else:
-        sell_usd(float(amount), get_data())
+        sell_usd(float(amount), system_data)
 else:
     print('COMMAND NOT RECOGNIZED')
